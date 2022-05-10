@@ -6,9 +6,11 @@ import {
   deleteRoom,
 } from "../../../controller/roomController";
 
+import onError from "../../../middleware/errors";
+
 dbConnect();
 
-const handler = nc();
+const handler = nc({ onError });
 
 handler.get(getOneRoom);
 handler.put(updateRoom);
