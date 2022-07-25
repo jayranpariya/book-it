@@ -1,12 +1,29 @@
 import Room from "../models/room";
 import ErrorHandler from "../utils/errorHandler";
 import catchAsyncError from "../middleware/catchAsyncError";
+import APIFeatures from "../utils/apiFeatures";
+import room from "../models/room";
 
 const getAllroom = catchAsyncError(async (req, res) => {
-  const rooms = await Room.find();
+  const resPerPage = 4;
+  const roomsCount = await Room.countDocuments();
+
+  const apiFeatures = new APIFeatures(Room.find(), req.query).search().filter();
+  let rooms = await apiFeatures.query;
+  
+  
+  apiFeatures.pagination(resPerPage);
+  rooms = await apiFeatures.query;
+  let filteredRoomsCount = rooms.length;
+  
+  
+  //  await apiFeatures.query;
+  // const rooms = await Room.find();
   res.status(200).json({
     success: true,
-    count: rooms.length,
+    roomsCount,
+    resPerPage,
+    filteredRoomsCount,
     rooms,
   });
 });
